@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public float speed = 5.0f;
     public GameObject bullet;
     private bool _bulletActive;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,14 +19,21 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        Vector3 position = this.transform.position;
+        Vector3 leftEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);
+        Vector3 rightEdge = Camera.main.ViewportToWorldPoint(Vector3.right);
+        //Making sure that it clamps the (Position of the position.x within the, leftEdge of the screen + 1.0f to stop clipping and the, rightEdge of the screen - 1.0f to stop clipping
+        position.x = Mathf.Clamp(position.x, leftEdge.x + 1.0f, rightEdge.x - 1.0f);
+        //Reading position value
+        this.transform.position = position;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             this.transform.position += Vector3.left * this.speed * Time.deltaTime;
         }else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             this.transform.position += Vector3.right * this.speed * Time.deltaTime;
         }
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)){
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)){
             Shoot();
         }
     }
@@ -44,7 +52,7 @@ public class Player : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.layer == LayerMask.NameToLayer("Invader")|| other.gameObject.layer == LayerMask.NameToLayer("EBullet"))
+        if(other.gameObject.layer == LayerMask.NameToLayer("Invader") || other.gameObject.layer == LayerMask.NameToLayer("EBullet"))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
